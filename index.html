@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Folklore Map</title>
+
+  <!-- bootstrap / icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- AOS (animate on scroll) -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+
+    main {
+      padding-bottom: 8rem; /* for footer */
+    }
+
+    /*
+    .theme-toggle {
+      cursor: pointer;
+    }
+    */
+
+  </style>
+
+</head>
+
+<body>
+
+<!-- navbar -->
+
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+  <div class="container">
+
+    <a href="./folklore_map.html" class="btn btn-md m-1">Folklore map</a>
+
+    <a href="./reverse_geocode_map.html" class="btn btn-md m-1">Reverse geocode map</a>
+
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a href="./contact.html" class="btn btn-md m-1">Contact</a>
+        </li>
+
+        <!--
+        <li class="nav-item">
+          <button id="toggleTheme" class="btn btn-outline-secondary ms-3 theme-toggle" title="Toggle Theme">
+            <i class="bi bi-moon-fill"></i>
+          </button>
+        </li>
+        -->
+
+      </ul>
+
+    </div>  <!-- end collapse -->
+  </div>  <!-- end container -->
+</nav>
+
+<main>
+
+
+  <!-- header -->
+
+  <header class="text-center py-5" data-aos="zoom-in">
+    <div class="container">
+
+      <h1>Folklore map of Great Britain and Ireland</h1>
+
+    </div>
+  </header>
+
+
+  <!-- featured stories -->
+
+  <section id="featured_stories" class="py-5">
+
+    <div class="container text-center">
+
+      <h2 class="mb-5">Featured stories</h2>
+
+      <div class="row g-4 mb-5">
+
+        <div class="col-md-4" data-aos="fade-up">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-palette display-4 text-danger mb-3"></i> -->
+              <h4 class="card-title">The Loch Ness Monster</h5>
+              <p class="card-text">Nessie is a creature in Scottish folklore
+                  said to inhabit Loch Ness in the Scottish Highlands. Often
+                  described as large and long-necked, the first modern sighting
+                  was in 1933. Some believe it to be a surviving plesiosaur
+                  from the Jurassic period.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-stars display-4 text-primary mb-3"></i> -->
+              <h4 class="card-title">The Mermaid of Zennor</h5>
+              <p class="card-text">A mermaid legend from Cornwall tells of
+                  a beautiful singer who lured a local man, Mathey Trewella,
+                  to live with her beneath the waves. A carved bench end in
+                  Zennor church is said to depict the mermaid.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-envelope-check display-4 text-success mb-3"></i> -->
+              <h4 class="card-title">The Brown Lady of Raynham Hall</h5>
+              <p class="card-text">One of England's most famous ghosts, said
+                  to be the spirit of Lady Dorothy Walpole who died in 1726.
+                  The most famous photograph was taken in 1936 showing a ghostly
+                  figure descending the staircase.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>  <!-- end row -->
+
+      <div class="row g-4">
+
+        <div class="col-md-4" data-aos="fade-up">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-palette display-4 text-danger mb-3"></i> -->
+              <h4 class="card-title">The Fairy Flag of Dunvegan</h5>
+              <p class="card-text">A sacred relic of the MacLeod clan kept
+                  at Dunvegan Castle on the Isle of Skye. Legend says it was
+                  given to the clan by fairies and when unfurled in battle,
+                  will bring victory but can only be used three times.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-stars display-4 text-primary mb-3"></i> -->
+              <h4 class="card-title">The Pendle Witches</h5>
+              <p class="card-text">Twelve people from Pendle were accused of witchcraft
+                  in 1612, with ten being hanged. The most famous was Old Demdike who
+                  was said to have made a clay figure to curse her enemies. The trials
+                  were among the most famous in English history.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <!-- <i class="bi bi-envelope-check display-4 text-success mb-3"></i> -->
+              <h4 class="card-title">King Arthur's Tomb</h5>
+              <p class="card-text">Glastonbury Abbey is claimed to be the burial place of
+                  King Arthur and Queen Guinevere. In 1191, monks claimed to have found
+                  their remains along with a lead cross bearing an inscription. The site
+                  has for centuries been associated with Arthurian legend.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>  <!-- end row -->
+
+    </div>  <!-- end container -->
+
+  </section>
+
+</main>
+
+<!-- footer -->
+<footer class="text-center py-4">
+  <div class="container">
+    <p class="mb-2">&copy; 2025 Folklore Map. All rights reserved.</p>
+    <!--
+    <div class="d-flex justify-content-center gap-3">
+      <a href="#" class="text-white"><i class="bi bi-twitter"></i></a>
+      <a href="#" class="text-white"><i class="bi bi-facebook"></i></a>
+      <a href="#" class="text-white"><i class="bi bi-github"></i></a>
+    </div>
+    -->
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+
+  // Init AOS
+  AOS.init();
+
+  // Dark Mode Toggle
+
+  // find the "toggleTheme" button (in the navbar)
+  const toggle = document.getElementById('toggleTheme');
+
+  // function to perform on click event
+  toggle.addEventListener('click', () => {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-bs-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-bs-theme', newTheme);
+    toggle.innerHTML = newTheme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+  });
+
+
+  // Bootstrap Form Validation
+
+  (() => {  // Immediately Invoked Function Expression (IIFE)
+            // It runs automatically when the script is loaded
+            // It keeps variables scoped inside the function, avoiding polluting the global namespace
+
+    // Enable strict mode: makes JavaScript behave more strictly,
+    // catching common errors (e.g., using undeclared variables).
+    'use strict';
+
+    // Select all form elements in the document that have the class "needs-validation".
+    // This class is used to indicate which forms require Bootstrap's custom validation styles.
+    const forms = document.querySelectorAll('.needs-validation');
+
+    // Convert the NodeList (which looks like an array but isn’t fully one) into a real array
+    // so we can safely use array methods like forEach.
+    Array.from(forms).forEach(form => {
+
+      // Add an event listener to each form that runs when the form is submitted.
+      form.addEventListener('submit', e => {
+
+        // Check if the form is valid according to built-in HTML5 validation rules.
+        // form.checkValidity() returns true if all fields meet their requirements.
+        if (!form.checkValidity()) {
+
+          // If the form is NOT valid, prevent it from being submitted.
+          e.preventDefault();
+
+          // Also stop the event from bubbling up to other handlers.
+          e.stopPropagation();
+        }
+
+        // Whether the form is valid or not, add the class 'was-validated'.
+        // This class triggers Bootstrap's visual validation feedback styles,
+        // showing green (valid) or red (invalid) borders/messages.
+        form.classList.add('was-validated');
+
+      }, false); // false = don't use event capture phase (use bubbling instead)
+    });
+  })();
+
+</script>
+
+</body>
+
+</html>
