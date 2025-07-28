@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="light">
+<html lang="en">
 
 <head>
 
@@ -21,12 +21,6 @@
     main {
       padding-bottom: 8rem; /* for footer */
     }
-
-    /*
-    .theme-toggle {
-      cursor: pointer;
-    }
-    */
 
   </style>
 
@@ -50,17 +44,10 @@
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 
       <ul class="navbar-nav">
+
         <li class="nav-item">
           <a href="./contact.html" class="btn btn-md m-1">Contact</a>
         </li>
-
-        <!--
-        <li class="nav-item">
-          <button id="toggleTheme" class="btn btn-outline-secondary ms-3 theme-toggle" title="Toggle Theme">
-            <i class="bi bi-moon-fill"></i>
-          </button>
-        </li>
-        -->
 
       </ul>
 
@@ -195,6 +182,7 @@
     </div>
     -->
   </div>
+
 </footer>
 
 <!-- Scripts -->
@@ -203,64 +191,7 @@
 
 <script>
 
-  // Init AOS
   AOS.init();
-
-  // Dark Mode Toggle
-
-  // find the "toggleTheme" button (in the navbar)
-  const toggle = document.getElementById('toggleTheme');
-
-  // function to perform on click event
-  toggle.addEventListener('click', () => {
-    const html = document.documentElement;
-    const current = html.getAttribute('data-bs-theme');
-    const newTheme = current === 'dark' ? 'light' : 'dark';
-    html.setAttribute('data-bs-theme', newTheme);
-    toggle.innerHTML = newTheme === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
-  });
-
-
-  // Bootstrap Form Validation
-
-  (() => {  // Immediately Invoked Function Expression (IIFE)
-            // It runs automatically when the script is loaded
-            // It keeps variables scoped inside the function, avoiding polluting the global namespace
-
-    // Enable strict mode: makes JavaScript behave more strictly,
-    // catching common errors (e.g., using undeclared variables).
-    'use strict';
-
-    // Select all form elements in the document that have the class "needs-validation".
-    // This class is used to indicate which forms require Bootstrap's custom validation styles.
-    const forms = document.querySelectorAll('.needs-validation');
-
-    // Convert the NodeList (which looks like an array but isn’t fully one) into a real array
-    // so we can safely use array methods like forEach.
-    Array.from(forms).forEach(form => {
-
-      // Add an event listener to each form that runs when the form is submitted.
-      form.addEventListener('submit', e => {
-
-        // Check if the form is valid according to built-in HTML5 validation rules.
-        // form.checkValidity() returns true if all fields meet their requirements.
-        if (!form.checkValidity()) {
-
-          // If the form is NOT valid, prevent it from being submitted.
-          e.preventDefault();
-
-          // Also stop the event from bubbling up to other handlers.
-          e.stopPropagation();
-        }
-
-        // Whether the form is valid or not, add the class 'was-validated'.
-        // This class triggers Bootstrap's visual validation feedback styles,
-        // showing green (valid) or red (invalid) borders/messages.
-        form.classList.add('was-validated');
-
-      }, false); // false = don't use event capture phase (use bubbling instead)
-    });
-  })();
 
 </script>
 
