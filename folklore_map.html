@@ -7,12 +7,11 @@
   <title>Folklore & Legends of the British Isles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Leaflet & Plugins CSS -->
+  <!-- leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
   <!-- bootstrap / icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -36,7 +35,6 @@
     html, body {
       margin: 0;
       height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
     body {
@@ -67,26 +65,6 @@
       right: 0;
       left: 0;
       z-index: 0;
-    }
-
-    #sidebar {
-      display: flex;
-      flex-direction: column;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      width: 250px;
-      min-width: 200px;
-      max-width: 250px;
-      z-index: 10;
-      box-sizing: border-box;
-      overflow-y: auto;
-      background-color: var(--light_brown);
-      color: var(--dark-brown);
-      border-right: 1px solid #ccc;
-      padding: 1rem;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
 
     .custom-button {
@@ -205,22 +183,11 @@
       gap: 5px;
       margin: 10px 0;
     }
-/*
-    .category-btn {
-      padding: 5px 10px;
-      background: #ecf0f1;
-      border: 1px solid #bdc3c7;
-      border-radius: 15px;
-      font-size: 0.8em;
-      cursor: pointer;
-    }
 
     .category-btn.active {
-      background: #3498db;
-      color: white;
-      border-color: #2980b9;
+      background: lightgreen;
     }
-*/
+
     @media (max-width: 768px) {
       #app {
         flex-direction: column;
@@ -262,8 +229,8 @@
 <div id="app" class="d-flex">
   <div class="container p-5 col-4 offset-8 z-1">
     <div class="row">
-      
-      <div class="legend-control">
+
+      <div class="legend-control" data-aos="zoom-in">
         <h3 class="display-6">Filter by Category</h3>
         <div class="category-filter">
           <button class="btn btn-primary btn-light btn-sm category-btn active" data-category="all">All</button>
@@ -278,22 +245,25 @@
 
       <input type="text" id="searchInput"
           class="search-box"
-          placeholder="Search...">
+          placeholder="Search..."
+          data-aos="zoom-in">
 
-      <div id="loading">Loading...</div>
+      <div id="loading" data-aos="zoom-in">Loading...</div>
 
-      <div id="folkloreDetails" class="folklore-info">
+      <div id="folkloreDetails" class="folklore-info" data-aos="zoom-in">
         <p>Click on a marker to see details about the folklore, myth or legend.</p>
       </div>
 
       <button id="clearBtn"
-          class="custom-button">
-        <i class="fas fa-trash-alt"></i> Clear Selection
+          class="custom-button"
+          data-aos="zoom-in">
+          Clear Selection
       </button>
 
       <button id="toggleBtn"
-          class="custom-button">
-        <i class="fas fa-layer-group"></i> Toggle Cluster View
+          class="custom-button"
+          data-aos="zoom-in">
+          Toggle Cluster View
       </button>
 
     </div>  <!-- end row -->
@@ -364,7 +334,7 @@
     });
   }
 
-  // Folklore data - expand...!
+  // Folklore data - expand...!!!
   const folkloreData = [
     {
       id: 1,
@@ -523,10 +493,10 @@
     });
   }
 
-  // Show detailed folklore information
+  // show detailed folklore information
   function showFolkloreDetails(item) {
     folkloreDetails.innerHTML = `
-      <div class="folklore-title">${item.title}</div>
+      <div class="folklore-title"><h2 class="display-5">${item.title}<h2></div>
       <div class="folklore-type" style="background-color: ${iconColors[item.type]}">
         ${item.type.charAt(0).toUpperCase() + item.type.slice(1)}
       </div>
@@ -534,11 +504,10 @@
         <p><strong>Region:</strong> ${item.region}</p>
         <p>${item.description}</p>
       </div>
-      ${item.image ? `<img src="${item.image}" alt="${item.title}" class="folklore-image">` : ''}
-    `;
+      ${item.image ? `<img src="${item.image}" alt="${item.title}" class="folklore-image">` : ''}`;
   }
 
-  // Filter markers by category
+  // filter markers by category
   function filterMarkers(category) {
     if (category === 'all') {
       addMarkers();
@@ -548,7 +517,7 @@
     }
   }
 
-  // Search
+  // search
   function searchFolklore(query) {
     const lowerQuery = query.toLowerCase();
     const filteredData = folkloreData.filter(item => 
@@ -559,7 +528,7 @@
     addMarkers(filteredData);
   }
 
-  // Event listeners
+  // event listeners
   clearBtn.onclick = () => {
     folkloreDetails.innerHTML = '<p>Click on a marker to see details about the folklore, myth or legend.</p>';
   };
@@ -567,10 +536,10 @@
   toggleBtn.onclick = () => {
     if (map.hasLayer(markerClusterGroup)) {
       map.removeLayer(markerClusterGroup);
-      toggleBtn.innerHTML = '<i class="fas fa-layer-group"></i> Enable Cluster View';
+      toggleBtn.innerHTML = 'Enable Cluster View';
     } else {
       map.addLayer(markerClusterGroup);
-      toggleBtn.innerHTML = '<i class="fas fa-layer-group"></i> Disable Cluster View';
+      toggleBtn.innerHTML = 'Disable Cluster View';
     }
   };
 
@@ -588,6 +557,11 @@
 
   // Initialize with all markers
   addMarkers();
+
+
+  AOS.init();
+
+
 </script>
 
 </body>
