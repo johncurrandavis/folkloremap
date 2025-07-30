@@ -39,32 +39,54 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    nav, header, footer {
+      flex-shrink: 0;
+    }
+
     #app {
       display: flex;
       flex-direction: row;
+      flex: 1;
       height: 100%;
+      position: relative;
+      overflow: hidden;
     }
-
-    #sidebar {
-      width: 350px;
-      min-width: 300px;
-      max-width: 400px;
-      border-right: 1px solid #ddd;
-      padding: 1rem;
-      box-sizing: border-box;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--light-brown);
-      background-color: #bb7;
-      color: var(--dark-brown);
-    }
-
-
 
     #map {
       flex: 1;
       height: 100%;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    #sidebar {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 250px;
+      min-width: 200px;
+      max-width: 250px;
+      z-index: 10;
+      box-sizing: border-box;
+      overflow-y: auto;
+      background-color: var(--light_brown);
+      color: var(--dark-brown);
+      border-right: 1px solid #ccc;
+      padding: 1rem;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     }
 
     .custom-button {
@@ -113,12 +135,20 @@
       border-radius: 50%;
     }
 
-    .legend-control {
-      margin: 15px 0;
+    .legend-control,
+    #searchInput,
+    #loading,
+    #folkloreDetails,
+    #clearBtn,
+    #toggleBtn {
+/*      margin-top: 1rem;
+      margin-left: 55%;
+      width: 40%;  */
       padding: 10px;
-      background: white;
-      border-radius: 4px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border-radius: 6px;
+      background-color: var(--pale_green);
+      color: var(--dark_brown);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .search-box {
@@ -126,8 +156,9 @@
       padding: 10px;
       margin: 10px 0;
       border: 1px solid #ddd;
-      border-radius: 4px;
+      border-radius: 3px;
       box-sizing: border-box;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .folklore-info {
@@ -174,7 +205,7 @@
       gap: 5px;
       margin: 10px 0;
     }
-
+/*
     .category-btn {
       padding: 5px 10px;
       background: #ecf0f1;
@@ -189,7 +220,7 @@
       color: white;
       border-color: #2980b9;
     }
-
+*/
     @media (max-width: 768px) {
       #app {
         flex-direction: column;
@@ -207,77 +238,84 @@
 
 <body>
 
+
 <!-- navbar -->
 
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
   <div class="container">
-
-    <a href="./reverse_geocode_map.html" class="btn btn-md m-1">Reverse geocode map</a>
-
-    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-
-      <ul class="navbar-nav">
-
-        <li class="nav-item">
-          <a href="./contact.html" class="btn btn-md m-1">Contact</a>
-        </li>
-
-        <li class="nav-item">
-          <a href="./index.html" class="btn btn-md m-1">Home</a>
-        </li>
-
-      </ul>
-
-    </div>  <!-- end collapse -->
-  </div>  <!-- end container -->
+    <a href="./index.html" class="btn btn-primary btn-sm">Home</a>
+  </div>
 </nav>
 
-<div id="app">
 
-  <div id="sidebar">
+<!-- header -->
 
-    <h1>Folklore map of Great Britain and Ireland</h1>
-    
-    <div class="legend-control">
-      <h3>Filter by Category</h3>
-      <div class="category-filter">
-        <button class="category-btn active" data-category="all">All</button>
-        <button class="category-btn" data-category="ghost">Ghosts</button>
-        <button class="category-btn" data-category="fairy">Fairies</button>
-        <button class="category-btn" data-category="monster">Monsters</button>
-        <button class="category-btn" data-category="legend">Legends</button>
-        <button class="category-btn" data-category="king">Royal</button>
-        <button class="category-btn" data-category="witch">Witches</button>
+<header class="text-center py-2">
+  <div class="container">
+    <h1 class="display-4">Folklore map of Great Britain and Ireland</h1>
+  </div>
+</header>
+
+
+<!-- app -->
+
+<div id="app" class="d-flex">
+  <div class="container p-5 col-4 offset-8 z-1">
+    <div class="row">
+      
+      <div class="legend-control">
+        <h3 class="display-6">Filter by Category</h3>
+        <div class="category-filter">
+          <button class="btn btn-primary btn-light btn-sm category-btn active" data-category="all">All</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="ghost">Ghosts</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="fairy">Fairies</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="monster">Monsters</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="legend">Legends</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="king">Royal</button>
+          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="witch">Witches</button>
+        </div>
       </div>
-    </div>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="Search folklore...">
+      <input type="text" id="searchInput"
+          class="search-box"
+          placeholder="Search...">
 
-    <div id="loading">Loading...</div>
+      <div id="loading">Loading...</div>
 
-    <div id="folkloreDetails" class="folklore-info">
-      <p>Click on a marker to see details about the folklore, myth or legend.</p>
-    </div>
+      <div id="folkloreDetails" class="folklore-info">
+        <p>Click on a marker to see details about the folklore, myth or legend.</p>
+      </div>
 
-    <button id="clearBtn" class="custom-button">
-      <i class="fas fa-trash-alt"></i> Clear Selection
-    </button>
+      <button id="clearBtn"
+          class="custom-button">
+        <i class="fas fa-trash-alt"></i> Clear Selection
+      </button>
 
-    <button id="toggleBtn" class="custom-button">
-      <i class="fas fa-layer-group"></i> Toggle Cluster View
-    </button>
+      <button id="toggleBtn"
+          class="custom-button">
+        <i class="fas fa-layer-group"></i> Toggle Cluster View
+      </button>
 
-  </div>  <!-- end sidebar -->
+    </div>  <!-- end row -->
+  </div>  <!-- end container -->
 
-  <div id="map"></div>
+  <div id="map" class="position-absolute top-0 z-0"></div>
 
 </div>  <!-- end app -->
 
+
+
+
+<!-- footer -->
+<footer class="text-center">
+  <div class="container">
+    <p><small>&copy; 2025 Folklore Map. All rights reserved.</small></p>
+  </div>
+
 <!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
@@ -326,7 +364,7 @@
     });
   }
 
-  // Folklore data - this would be expanded with many more entries
+  // Folklore data - expand...!
   const folkloreData = [
     {
       id: 1,
@@ -334,7 +372,7 @@
       type: "monster",
       location: { lat: 57.3229, lng: -4.4244 },
       description: "Nessie is a creature in Scottish folklore said to inhabit Loch Ness in the Scottish Highlands. Often described as large and long-necked, the first modern sighting was in 1933. Some believe it to be a surviving plesiosaur from the Jurassic period.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/5/5e/Loch_Ness_Monster.jpg",
+      image: "https://....jpg",
       region: "Scotland"
     },
     {
@@ -343,7 +381,7 @@
       type: "legend",
       location: { lat: 50.1919, lng: -5.5674 },
       description: "A mermaid legend from Cornwall tells of a beautiful singer who lured a local man, Mathey Trewella, to live with her beneath the waves. A carved bench end in Zennor church is said to depict the mermaid.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Zennor_Mermaid.jpg/800px-Zennor_Mermaid.jpg",
+      image: "https://....jpg",
       region: "Cornwall"
     },
     {
@@ -352,7 +390,7 @@
       type: "ghost",
       location: { lat: 52.7925, lng: 0.7936 },
       description: "One of England's most famous ghosts, said to be the spirit of Lady Dorothy Walpole who died in 1726. The most famous photograph was taken in 1936 showing a ghostly figure descending the staircase.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Brown_Lady.jpg/800px-Brown_Lady.jpg",
+      image: "https://....jpg",
       region: "Norfolk"
     },
     {
@@ -361,7 +399,7 @@
       type: "fairy",
       location: { lat: 57.4467, lng: -6.5893 },
       description: "A sacred relic of the MacLeod clan kept at Dunvegan Castle on the Isle of Skye. Legend says it was given to the clan by fairies and when unfurled in battle, will bring victory but can only be used three times.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Dunvegan_Castle.jpg/800px-Dunvegan_Castle.jpg",
+      image: "https://....jpg",
       region: "Scotland"
     },
     {
@@ -379,7 +417,7 @@
       type: "king",
       location: { lat: 51.4136, lng: -2.7189 },
       description: "Glastonbury Abbey claims to be the burial place of King Arthur and Queen Guinevere. In 1191, monks claimed to have found their remains along with a lead cross bearing an inscription. The site has been associated with Arthurian legend for centuries.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Glastonbury_Abbey.jpg/800px-Glastonbury_Abbey.jpg",
+      image: "https://....jpg",
       region: "Somerset"
     },
     {
@@ -388,7 +426,7 @@
       type: "monster",
       location: { lat: 52.4544, lng: 1.4386 },
       description: "During a storm in 1577, a terrifying black dog with flaming eyes appeared in St Mary's Church, killing two people and leaving others injured. Similar black dog apparitions (known as Black Shuck) appear in folklore across East Anglia.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/St_Mary%27s_Church%2C_Bungay.jpg/800px-St_Mary%27s_Church%2C_Bungay.jpg",
+      image: "https://....jpg",
       region: "Suffolk"
     },
     {
@@ -397,7 +435,7 @@
       type: "fairy",
       location: { lat: 58.9806, lng: -2.9600 },
       description: "In Scottish and Irish folklore, selkies are mythological beings capable of changing from seal to human form by shedding their skin. Many stories tell of selkies being forced to remain on land when humans hide their sealskins.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Orkney_Islands_UK_relief_location_map.jpg/800px-Orkney_Islands_UK_relief_location_map.jpg",
+      image: "https://....jpg",
       region: "Orkney"
     },
     {
@@ -415,7 +453,7 @@
       type: "ghost",
       location: { lat: 56.6208, lng: -3.0015 },
       description: "Glamis Castle in Scotland is said to be haunted by the Grey Lady, thought to be Janet Douglas who was burned at the stake in 1537 for witchcraft. She is often seen in the chapel, praying silently before vanishing.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Glamis_Castle_2006.jpg/800px-Glamis_Castle_2006.jpg",
+      image: "https://....jpg",
       region: "Scotland"
     },
     {
@@ -424,7 +462,7 @@
       type: "monster",
       location: { lat: 50.5500, lng: -4.6167 },
       description: "A phantom wild cat or puma-like creature said to roam Bodmin Moor in Cornwall. Sightings date back to the 1970s, with some farmers blaming it for livestock deaths. Despite investigations, no conclusive evidence has been found.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Bodmin_Moor_-_geograph.org.uk_-_1092910.jpg/800px-Bodmin_Moor_-_geograph.org.uk_-_1092910.jpg",
+      image: "https://....jpg",
       region: "Cornwall"
     },
     {
@@ -433,7 +471,7 @@
       type: "fairy",
       location: { lat: 57.2483, lng: -6.2743 },
       description: "These crystal-clear pools on the Isle of Skye are said to be home to water spirits and fairies. Legend says that if you leave an offering by the pools, the fairies may grant you a wish or bless you with good fortune.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Fairy_Pools_-_Isle_of_Skye_-_Scotland_-_04.jpg/800px-Fairy_Pools_-_Isle_of_Skye_-_Scotland_-_04.jpg",
+      image: "https://....jpg",
       region: "Scotland"
     },
     {
@@ -442,7 +480,7 @@
       type: "legend",
       location: { lat: 52.4153, lng: -4.0829 },
       description: "A collection of Welsh myths and legends compiled in the 12th-13th centuries. Includes tales of King Arthur, magical cauldrons, giants, and the otherworld. Many locations in Wales are connected to these ancient stories.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/The_Mabinogion.jpg/800px-The_Mabinogion.jpg",
+      image: "https://....jpg",
       region: "Wales"
     },
     {
@@ -451,7 +489,7 @@
       type: "witch",
       location: { lat: 51.2278, lng: -2.6717 },
       description: "Legend tells of a witch who lived in the Wookey Hole caves and terrorized locals. A monk from Glastonbury is said to have turned her to stone. The 'witch's' stalagmite formation can still be seen in the caves today.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Wookey_Hole_Caves.jpg/800px-Wookey_Hole_Caves.jpg",
+      image: "https://....jpg",
       region: "Somerset"
     },
     {
@@ -460,7 +498,7 @@
       type: "legend",
       location: { lat: 53.4808, lng: -2.2426 },
       description: "A folk myth prevalent across Northern Europe including Britain. A ghostly group of huntsmen with horses and hounds race across the sky, often seen as an omen of catastrophe. In England, the leader is sometimes said to be Herne the Hunter.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/The_Wild_Hunt_of_Odin_by_Peter_Nicolai_Arbo.jpg/800px-The_Wild_Hunt_of_Odin_by_Peter_Nicolai_Arbo.jpg",
+      image: "https://....jpg",
       region: "Various"
     }
   ];
@@ -510,7 +548,7 @@
     }
   }
 
-  // Search folklore
+  // Search
   function searchFolklore(query) {
     const lowerQuery = query.toLowerCase();
     const filteredData = folkloreData.filter(item => 
