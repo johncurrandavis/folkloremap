@@ -18,25 +18,22 @@
   <!-- AOS -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
+  <link rel="stylesheet" href="./style.css" />
+
   <style>
+
     html, body {
       margin: 0;
       height: 100%;
     }
-    body {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    nav, header, footer {
-      flex-shrink: 0;
-    }
+
     #app {
       display: flex;
       flex: 1;
       position: relative;
       overflow: hidden;
     }
+
     #map {
       flex: 1;
       height: 100%;
@@ -44,9 +41,83 @@
       top: 0; bottom: 0; left: 0; right: 0;
       z-index: 0;
     }
+
+    #controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 35%;
+      max-height: 100%;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    #folkloreDetails,
+    #legend-control {
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+      background-color: #deb;
+      color: #210;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    #searchInput,
+    #clearBtn,
+    #toggleBtn,
+    #loading {
+      width: 100%;
+      padding: 5px;
+      border-radius: 4px;
+      background-color: #deb;
+      color: #210;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+
+    .category-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin: 10px 0;
+    }
+
+    .category-btn.active {
+      background: lightgreen;
+    }
+/*
+    .folklore-title {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .folklore-type {
+      display: inline-block;
+      padding: 3px 8px;
+      background: #e74c3c;
+      color: white;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-bottom: 10px;
+    }
+
+    .folklore-description {
+      font-size: 0.95em;
+      line-height: 1.5;
+      color: #34495e;
+    }
+
+    .folklore-image {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+*/
     .custom-button {
       display: block;
-      margin: 10px 0;
+      margin: 5px 0;
       padding: 10px 15px;
       background: #4a6fa5;
       color: white;
@@ -58,118 +129,84 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.1);
       transition: background 0.2s;
     }
+
     .custom-button:hover {
       background: #3a5a8a;
     }
-    .legend-control,
-    #searchInput,
-    #loading,
-    #folkloreDetails,
-    #clearBtn,
-    #toggleBtn {
-      padding: 10px;
-      border-radius: 6px;
-      background-color: #deb;
-      color: #210;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+
+    #loading {
+      display: none;
     }
-    .category-filter {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin: 10px 0;
-    }
-    .category-btn.active {
-      background: lightgreen;
-    }
-    .folklore-info {
-      background: white;
-      padding: 15px;
-      border-radius: 4px;
-      margin-top: 15px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-    }
-    .folklore-title {
-      font-size: 1.2em;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #2c3e50;
-    }
-    .folklore-type {
-      display: inline-block;
-      padding: 3px 8px;
-      background: #e74c3c;
-      color: white;
-      border-radius: 12px;
-      font-size: 0.8em;
-      margin-bottom: 10px;
-    }
-    .folklore-description {
-      font-size: 0.95em;
-      line-height: 1.5;
-      color: #34495e;
-    }
-    .folklore-image {
-      width: 100%;
-      height: auto;
-      border-radius: 4px;
-      margin: 10px 0;
-    }
-    @media (max-width: 768px) {
-      #app {
-        flex-direction: column;
+
+    @media (min-width: 768px) {
+      #controls {
+        width: 350px;
       }
     }
+
   </style>
+
 </head>
 
 <body>
 
-<!-- Navbar -->
+<!-- navbar -->
+
 <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
   <div class="container">
     <a href="./index.html" class="btn btn-primary btn-sm">Home</a>
   </div>
 </nav>
 
-<!-- Header -->
+<!-- header -->
+
 <header class="text-center py-2">
   <div class="container">
-    <h1 class="display-4">Folklore map of Great Britain and Ireland</h1>
+    <h1 class="display-5">Folklore map of Great Britain and Ireland</h1>
   </div>
 </header>
 
-<!-- App Container -->
+<!-- app -->
+
 <div id="app">
-  <div class="container p-5 col-4 offset-8 z-1">
-    <div class="row">
-      <div class="legend-control" data-aos="zoom-in">
-        <h3 class="display-6">Filter by Category</h3>
-        <div class="category-filter">
-          <button class="btn btn-primary btn-light btn-sm category-btn active" data-category="all">All</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="ghost">Ghosts</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="fairy">Fairies</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="monster">Monsters</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="legend">Legends</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="king">Royal</button>
-          <button class="btn btn-primary btn-light btn-sm category-btn" data-category="witch">Witches</button>
-        </div>
-      </div>
 
+  <div id="controls">
+
+    <div id="legend-control" data-aos="zoom-in">
+
+      <h4 class="display-6">Filter by Category</h4>
+      <div class="category-filter">
+        <button class="btn btn-primary btn-light btn-sm category-btn active" data-category="all">All</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="ghost">Ghosts</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="fairy">Fairies</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="monster">Monsters</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="legend">Legends</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="king">Royal</button>
+        <button class="btn btn-primary btn-light btn-sm category-btn" data-category="witch">Witches</button>
+      </div>
       <input type="text" id="searchInput" class="search-box" placeholder="Search..." data-aos="zoom-in">
-      <div id="loading" data-aos="zoom-in">Loading...</div>
-      <div id="folkloreDetails" class="folklore-info" data-aos="zoom-in">
-        <p>Click on a marker to see details about the folklore, myth or legend.</p>
-      </div>
-
-      <button id="clearBtn" class="custom-button" data-aos="zoom-in">Clear Selection</button>
+      <div id="loading">Loading...</div>
       <button id="toggleBtn" class="custom-button" data-aos="zoom-in">Disable Cluster View</button>
+
     </div>
+      
+    <div id="folkloreDetails" data-aos="zoom-in">
+
+      <p>Click on a marker to see details about the folklore, myth or legend.</p>
+  
+    </div>
+  
+    <button id="clearBtn" class="custom-button" data-aos="zoom-in">Clear Selection</button>
+  
   </div>
-  <div id="map" class="position-absolute top-0 z-0"></div>
+
+  <div id="map"></div>
+
 </div>
 
-<!-- Footer -->
+
+<!-- footer -->
+
 <footer class="text-center">
   <div class="container">
     <p><small>&copy; 2025 Folklore Map. All rights reserved.</small></p>
