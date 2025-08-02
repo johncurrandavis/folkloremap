@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="utf-8" />
   <title>Folklore & Legends of the British Isles</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -74,6 +76,11 @@
       box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
+    #folkloreDetails,
+    #clearBtn {
+      display: none;
+    }
+
     .category-filter {
       display: flex;
       flex-wrap: wrap;
@@ -84,7 +91,7 @@
     .category-btn.active {
       background: lightgreen;
     }
-/*
+
     .folklore-title {
       font-size: 1.2em;
       font-weight: bold;
@@ -103,9 +110,9 @@
     }
 
     .folklore-description {
-      font-size: 0.95em;
-      line-height: 1.5;
-      color: #34495e;
+      font-size: 0.85em;
+      line-height: 1.3;
+      color: #234;
     }
 
     .folklore-image {
@@ -114,7 +121,7 @@
       border-radius: 4px;
       margin: 10px 0;
     }
-*/
+
     .custom-button {
       display: block;
       margin: 5px 0;
@@ -221,177 +228,193 @@
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <script>
-const map = L.map('map').setView([54.5, -4], 6);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
-}).addTo(map);
 
-const folkloreDetails = document.getElementById('folkloreDetails');
-const loading = document.getElementById('loading');
-const clearBtn = document.getElementById('clearBtn');
-const toggleBtn = document.getElementById('toggleBtn');
-const searchInput = document.getElementById('searchInput');
-const categoryBtns = document.querySelectorAll('.category-btn');
+  const map = L.map('map').setView([54.5, -4], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
+  }).addTo(map);
 
-const markerClusterGroup = L.markerClusterGroup();
-const plainMarkerGroup = L.layerGroup();
-let isClustered = true;
+  const folkloreDetails = document.getElementById('folkloreDetails');
+  const loading = document.getElementById('loading');
+  const clearBtn = document.getElementById('clearBtn');
+  const toggleBtn = document.getElementById('toggleBtn');
+  const searchInput = document.getElementById('searchInput');
+  const categoryBtns = document.querySelectorAll('.category-btn');
 
-const iconColors = {
-  ghost: '#9b59b6', fairy: '#2ecc71', monster: '#e74c3c',
-  legend: '#f39c12', king: '#3498db', witch: '#34495e'
-};
+  const markerClusterGroup = L.markerClusterGroup();
+  const plainMarkerGroup = L.layerGroup();
+  let isClustered = true;
 
-function createCustomIcon(type) {
-  return L.divIcon({
-    className: 'custom-icon',
-    html: `<div style="background-color: ${iconColors[type]}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">${type.charAt(0).toUpperCase()}</div>`,
-    iconSize: [24, 24], iconAnchor: [12, 12]
-  });
-}
+  const iconColors = {
+    ghost: '#9b59b6', fairy: '#2ecc71', monster: '#e74c3c',
+    legend: '#f39c12', king: '#3498db', witch: '#34495e'
+  };
 
-const folkloreData = [
-    {
-      id: 1,
-      title: "The Loch Ness Monster",
-      type: "monster",
-      location: { lat: 57.3229, lng: -4.4244 },
-      description: "Nessie is a creature in Scottish folklore said to inhabit Loch Ness in the Scottish Highlands. Often described as large and long-necked, the first modern sighting was in 1933. Some believe it to be a surviving plesiosaur from the Jurassic period.",
-      image: "https://....jpg",
-      region: "Scotland"
-    },
-    {
-      id: 2,
-      title: "The Mermaid of Zennor",
-      type: "legend",
-      location: { lat: 50.1919, lng: -5.5674 },
-      description: "A mermaid legend from Cornwall tells of a beautiful singer who lured a local man, Mathey Trewella, to live with her beneath the waves. A carved bench end in Zennor church is said to depict the mermaid.",
-      image: "https://....jpg",
-      region: "Cornwall"
-    },
-    {
-      id: 3,
-      title: "The Brown Lady of Raynham Hall",
-      type: "ghost",
-      location: { lat: 52.7925, lng: 0.7936 },
-      description: "One of England's most famous ghosts, said to be the spirit of Lady Dorothy Walpole who died in 1726. The most famous photograph was taken in 1936 showing a ghostly figure descending the staircase.",
-      image: "https://....jpg",
-      region: "Norfolk"
-    },
-    {
-      id: 4,
-      title: "The Fairy Flag of Dunvegan",
-      type: "fairy",
-      location: { lat: 57.4467, lng: -6.5893 },
-      description: "A sacred relic of the MacLeod clan kept at Dunvegan Castle on the Isle of Skye. Legend says it was given to the clan by fairies and when unfurled in battle, will bring victory but can only be used three times.",
-      image: "https://....jpg",
-      region: "Scotland"
-    },
-    {
-      id: 5,
-      title: "The Pendle Witches",
-      type: "witch",
-      location: { lat: 53.8558, lng: -2.1793 },
-      description: "Twelve people from Pendle were accused of witchcraft in 1612, with ten being hanged. The most famous was Old Demdike who was said to have made a clay figure to curse her enemies. The trials were among the most famous in English history.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Pendle_Hill_from_Barrowford.jpg/800px-Pendle_Hill_from_Barrowford.jpg",
-      region: "Lancashire"
-    },
-    {
-      id: 6,
-      title: "King Arthur's Tomb",
-      type: "king",
-      location: { lat: 51.4136, lng: -2.7189 },
-      description: "Glastonbury Abbey claims to be the burial place of King Arthur and Queen Guinevere. In 1191, monks claimed to have found their remains along with a lead cross bearing an inscription. The site has been associated with Arthurian legend for centuries.",
-      image: "https://....jpg",
-      region: "Somerset"
-    },
-    {
-      id: 7,
-      title: "The Black Dog of Bungay",
-      type: "monster",
-      location: { lat: 52.4544, lng: 1.4386 },
-      description: "During a storm in 1577, a terrifying black dog with flaming eyes appeared in St Mary's Church, killing two people and leaving others injured. Similar black dog apparitions (known as Black Shuck) appear in folklore across East Anglia.",
-      image: "https://....jpg",
-      region: "Suffolk"
-    },
-    {
-      id: 8,
-      title: "The Selkies of Orkney",
-      type: "fairy",
-      location: { lat: 58.9806, lng: -2.9600 },
-      description: "In Scottish and Irish folklore, selkies are mythological beings capable of changing from seal to human form by shedding their skin. Many stories tell of selkies being forced to remain on land when humans hide their sealskins.",
-      image: "https://....jpg",
-      region: "Orkney"
-    },
-    {
-      id: 9,
-      title: "The Green Children of Woolpit",
-      type: "legend",
-      location: { lat: 52.2247, lng: 0.8886 },
-      description: "12th century legend tells of two green-skinned children who appeared in the village speaking an unknown language. After learning English, they claimed to come from a twilight world called St Martin's Land where all inhabitants were green.",
-      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Woolpit_village_sign.jpg/800px-Woolpit_village_sign.jpg",
-      region: "Suffolk"
-    },
-    {
-      id: 10,
-      title: "The Grey Lady of Glamis Castle",
-      type: "ghost",
-      location: { lat: 56.6208, lng: -3.0015 },
-      description: "Glamis Castle in Scotland is said to be haunted by the Grey Lady, thought to be Janet Douglas who was burned at the stake in 1537 for witchcraft. She is often seen in the chapel, praying silently before vanishing.",
-      image: "https://....jpg",
-      region: "Scotland"
-    },
-    {
-      id: 11,
-      title: "The Beast of Bodmin Moor",
-      type: "monster",
-      location: { lat: 50.5500, lng: -4.6167 },
-      description: "A phantom wild cat or puma-like creature said to roam Bodmin Moor in Cornwall. Sightings date back to the 1970s, with some farmers blaming it for livestock deaths. Despite investigations, no conclusive evidence has been found.",
-      image: "https://....jpg",
-      region: "Cornwall"
-    },
-    {
-      id: 12,
-      title: "The Fairy Pools of Skye",
-      type: "fairy",
-      location: { lat: 57.2483, lng: -6.2743 },
-      description: "These crystal-clear pools on the Isle of Skye are said to be home to water spirits and fairies. Legend says that if you leave an offering by the pools, the fairies may grant you a wish or bless you with good fortune.",
-      image: "https://....jpg",
-      region: "Scotland"
-    },
-    {
-      id: 13,
-      title: "The Mabinogion Tales",
-      type: "legend",
-      location: { lat: 52.4153, lng: -4.0829 },
-      description: "A collection of Welsh myths and legends compiled in the 12th-13th centuries. Includes tales of King Arthur, magical cauldrons, giants, and the otherworld. Many locations in Wales are connected to these ancient stories.",
-      image: "https://....jpg",
-      region: "Wales"
-    },
-    {
-      id: 14,
-      title: "The Witch of Wookey Hole",
-      type: "witch",
-      location: { lat: 51.2278, lng: -2.6717 },
-      description: "Legend tells of a witch who lived in the Wookey Hole caves and terrorized locals. A monk from Glastonbury is said to have turned her to stone. The 'witch's' stalagmite formation can still be seen in the caves today.",
-      image: "https://....jpg",
-      region: "Somerset"
-    },
-    {
-      id: 15,
-      title: "The Wild Hunt",
-      type: "legend",
-      location: { lat: 53.4808, lng: -2.2426 },
-      description: "A folk myth prevalent across Northern Europe including Britain. A ghostly group of huntsmen with horses and hounds race across the sky, often seen as an omen of catastrophe. In England, the leader is sometimes said to be Herne the Hunter.",
-      image: "https://....jpg",
-      region: "Various"
-    }
-  ];
+  function createCustomIcon(type) {
+    return L.divIcon({
+      className: 'custom-icon',
+      html: `<div style="background-color: ${iconColors[type]}; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">${type.charAt(0).toUpperCase()}</div>`,
+      iconSize: [24, 24], iconAnchor: [12, 12]
+    });
+  }
 
-let currentCategory = 'all';
-let currentQuery = '';
+  const folkloreData = [
+      {
+        id: 1,
+        title: "The Loch Ness Monster",
+        type: "monster",
+        location: { lat: 57.3229, lng: -4.4244 },
+        description: "Nessie is a creature in Scottish folklore said to inhabit Loch Ness in the Scottish Highlands. Often described as large and long-necked, the first modern sighting was in 1933. Some believe it to be a surviving plesiosaur from the Jurassic period.",
+        image: "https://....jpg",
+        region: "Scotland",
+        link: "./details/scotland/loch_ness_monster.html"
+      },
+      {
+        id: 2,
+        title: "The Mermaid of Zennor",
+        type: "legend",
+        location: { lat: 50.1919, lng: -5.5674 },
+        description: "A mermaid legend from Cornwall tells of a beautiful singer who lured a local man, Mathey Trewella, to live with her beneath the waves. A carved bench end in Zennor church is said to depict the mermaid.",
+        image: "https://....jpg",
+        region: "Cornwall",
+        link: "./details/cornwall/mermaid_of_zennor.html"
+      },
+      {
+        id: 3,
+        title: "The Brown Lady of Raynham Hall",
+        type: "ghost",
+        location: { lat: 52.7925, lng: 0.7936 },
+        description: "One of England's most famous ghosts, said to be the spirit of Lady Dorothy Walpole who died in 1726. The most famous photograph was taken in 1936 showing a ghostly figure descending the staircase.",
+        image: "https://....jpg",
+        region: "Norfolk",
+        link: "./details/norfolk/brown_lady_of_raynham_hall.html"
+      },
+      {
+        id: 4,
+        title: "The Fairy Flag of Dunvegan",
+        type: "fairy",
+        location: { lat: 57.4467, lng: -6.5893 },
+        description: "A sacred relic of the MacLeod clan kept at Dunvegan Castle on the Isle of Skye. Legend says it was given to the clan by fairies and when unfurled in battle, will bring victory but can only be used three times.",
+        image: "https://....jpg",
+        region: "Scotland",
+        link: "./details/scotland/fairy_flag_of_dunvegan.html"
+      },
+      {
+        id: 5,
+        title: "The Pendle Witches",
+        type: "witch",
+        location: { lat: 53.8558, lng: -2.1793 },
+        description: "Twelve people from Pendle were accused of witchcraft in 1612, with ten being hanged. The most famous was Old Demdike who was said to have made a clay figure to curse her enemies. The trials were among the most famous in English history.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Pendle_Hill_from_Barrowford.jpg/800px-Pendle_Hill_from_Barrowford.jpg",
+        region: "Lancashire",
+        link: "./details/lancashire/pendle_witches.html"
+      },
+      {
+        id: 6,
+        title: "King Arthur's Tomb",
+        type: "king",
+        location: { lat: 51.4136, lng: -2.7189 },
+        description: "Glastonbury Abbey claims to be the burial place of King Arthur and Queen Guinevere. In 1191, monks claimed to have found their remains along with a lead cross bearing an inscription. The site has been associated with Arthurian legend for centuries.",
+        image: "https://....jpg",
+        region: "Somerset",
+        link: "./details/somerset/king_arthurs_tomb.html"
+      },
+      {
+        id: 7,
+        title: "The Black Dog of Bungay",
+        type: "monster",
+        location: { lat: 52.4544, lng: 1.4386 },
+        description: "During a storm in 1577, a terrifying black dog with flaming eyes appeared in St Mary's Church, killing two people and leaving others injured. Similar black dog apparitions (known as Black Shuck) appear in folklore across East Anglia.",
+        image: "https://....jpg",
+        region: "Suffolk",
+        link: "./details/suffolk/black_dog_of_bungay.html"
+      },
+      {
+        id: 8,
+        title: "The Selkies of Orkney",
+        type: "fairy",
+        location: { lat: 58.9806, lng: -2.9600 },
+        description: "In Scottish and Irish folklore, selkies are mythological beings capable of changing from seal to human form by shedding their skin. Many stories tell of selkies being forced to remain on land when humans hide their sealskins.",
+        image: "https://....jpg",
+        region: "Orkney",
+        link: "./details/orkney/selkies_of_orkney.html"
+      },
+      {
+        id: 9,
+        title: "The Green Children of Woolpit",
+        type: "legend",
+        location: { lat: 52.2247, lng: 0.8886 },
+        description: "12th century legend tells of two green-skinned children who appeared in the village speaking an unknown language. After learning English, they claimed to come from a twilight world called St Martin's Land where all inhabitants were green.",
+        image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Woolpit_village_sign.jpg/800px-Woolpit_village_sign.jpg",
+        region: "Suffolk",
+        link: "./details/suffolk/green_children_of_woolpit.html"
+      },
+      {
+        id: 10,
+        title: "The Grey Lady of Glamis Castle",
+        type: "ghost",
+        location: { lat: 56.6208, lng: -3.0015 },
+        description: "Glamis Castle in Scotland is said to be haunted by the Grey Lady, thought to be Janet Douglas who was burned at the stake in 1537 for witchcraft. She is often seen in the chapel, praying silently before vanishing.",
+        image: "https://....jpg",
+        region: "Scotland",
+        link: "./details/scotland/grey_lady_of_glamis_castle.html"
+      },
+      {
+        id: 11,
+        title: "The Beast of Bodmin Moor",
+        type: "monster",
+        location: { lat: 50.5500, lng: -4.6167 },
+        description: "A phantom wild cat or puma-like creature said to roam Bodmin Moor in Cornwall. Sightings date back to the 1970s, with some farmers blaming it for livestock deaths. Despite investigations, no conclusive evidence has been found.",
+        image: "https://....jpg",
+        region: "Cornwall",
+        link: "./details/cornwall/beast_of_bodmin_moor.html" 
+      },
+      {
+        id: 12,
+        title: "The Fairy Pools of Skye",
+        type: "fairy",
+        location: { lat: 57.2483, lng: -6.2743 },
+        description: "These crystal-clear pools on the Isle of Skye are said to be home to water spirits and fairies. Legend says that if you leave an offering by the pools, the fairies may grant you a wish or bless you with good fortune.",
+        image: "https://....jpg",
+        region: "Scotland",
+        link: "./details/scotland/fairy_pools_of_skye.html" 
+      },
+      {
+        id: 13,
+        title: "The Mabinogion Tales",
+        type: "legend",
+        location: { lat: 52.4153, lng: -4.0829 },
+        description: "A collection of Welsh myths and legends compiled in the 12th-13th centuries. Includes tales of King Arthur, magical cauldrons, giants, and the otherworld. Many locations in Wales are connected to these ancient stories.",
+        image: "https://....jpg",
+        region: "Wales",
+        link: "./details/wales/mabinogion_tales.html" 
+      },
+      {
+        id: 14,
+        title: "The Witch of Wookey Hole",
+        type: "witch",
+        location: { lat: 51.2278, lng: -2.6717 },
+        description: "Legend tells of a witch who lived in the Wookey Hole caves and terrorized locals. A monk from Glastonbury is said to have turned her to stone. The 'witch's' stalagmite formation can still be seen in the caves today.",
+        image: "https://....jpg",
+        region: "Somerset",
+        link: "./details/somerset/witch_of_wookey_hole.html" 
+      },
+      {
+        id: 15,
+        title: "The Wild Hunt",
+        type: "legend",
+        location: { lat: 53.4808, lng: -2.2426 },
+        description: "A folk myth prevalent across Northern Europe including Britain. A ghostly group of huntsmen with horses and hounds race across the sky, often seen as an omen of catastrophe. In England, the leader is sometimes said to be Herne the Hunter.",
+        image: "https://....jpg",
+        region: "Various",
+        link: "./details/various/wild_hunt.html" 
+      }
+    ];
 
-function showFolkloreDetails(item) {
+  let currentCategory = 'all';
+  let currentQuery = '';
+
+  function showFolkloreDetails(item) {
   folkloreDetails.innerHTML = `
     <div class="folklore-title"><h2 class="display-5">${item.title}</h2></div>
     <div class="folklore-type" style="background-color: ${iconColors[item.type]}">
@@ -401,78 +424,91 @@ function showFolkloreDetails(item) {
       <p><strong>Region:</strong> ${item.region}</p>
       <p>${item.description}</p>
     </div>
-    ${item.image ? `<img src="${item.image}" alt="${item.title}" class="folklore-image">` : ''}`;
-}
+    ${item.image ? `<img src="${item.image}" alt="${item.title}" class="folklore-image">` : ''}
+    ${item.link ? `<a href="${item.link}" class="custom-button mt-2" target="_blank">Read More</a>` : ''}
+  `;
 
-function getFilteredData() {
-  return folkloreData.filter(item => {
-    const matchCategory = currentCategory === 'all' || item.type === currentCategory;
-    const matchQuery = item.title.toLowerCase().includes(currentQuery) ||
-      item.description.toLowerCase().includes(currentQuery) ||
-      item.region.toLowerCase().includes(currentQuery);
-    return matchCategory && matchQuery;
-  });
-}
-
-function addMarkers() {
-  markerClusterGroup.clearLayers();
-  plainMarkerGroup.clearLayers();
-
-  const filteredData = getFilteredData();
-
-  filteredData.forEach(item => {
-    const marker = L.marker([item.location.lat, item.location.lng], {
-      icon: createCustomIcon(item.type)
-    });
-    marker.on('click', () => showFolkloreDetails(item));
-    marker.bindPopup(`<b>${item.title}</b><br>${item.type} - ${item.region}`);
-    if (isClustered) {
-      markerClusterGroup.addLayer(marker);
-    } else {
-      plainMarkerGroup.addLayer(marker);
-    }
-  });
-
-  if (isClustered) {
-    map.addLayer(markerClusterGroup);
-    map.removeLayer(plainMarkerGroup);
-  } else {
-    map.addLayer(plainMarkerGroup);
-    map.removeLayer(markerClusterGroup);
+    folkloreDetails.style.display = 'block';
+    clearBtn.style.display = 'block';
+    document.getElementById('legend-control').style.display = 'none';
   }
-}
 
-clearBtn.onclick = () => {
-  folkloreDetails.innerHTML = '<p>Click on a marker to see details about the folklore, myth or legend.</p>';
-};
+  function getFilteredData() {
+    return folkloreData.filter(item => {
+      const matchCategory = currentCategory === 'all' || item.type === currentCategory;
+      const matchQuery = item.title.toLowerCase().includes(currentQuery) ||
+        item.description.toLowerCase().includes(currentQuery) ||
+        item.region.toLowerCase().includes(currentQuery);
+      return matchCategory && matchQuery;
+    });
+  }
 
-toggleBtn.onclick = () => {
-  const center = map.getCenter();
-  const zoom = map.getZoom();
-  isClustered = !isClustered;
-  toggleBtn.textContent = isClustered ? 'Disable Cluster View' : 'Enable Cluster View';
-  addMarkers();
-  map.setView(center, zoom); // maintain map position
-};
+  function addMarkers() {
+    markerClusterGroup.clearLayers();
+    plainMarkerGroup.clearLayers();
 
-searchInput.addEventListener('input', (e) => {
-  currentQuery = e.target.value.toLowerCase();
-  addMarkers();
-});
+    const filteredData = getFilteredData();
 
-categoryBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    categoryBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCategory = btn.dataset.category;
+    filteredData.forEach(item => {
+      const marker = L.marker([item.location.lat, item.location.lng], {
+        icon: createCustomIcon(item.type)
+      });
+      marker.on('click', () => showFolkloreDetails(item));
+      marker.bindPopup(`<b>${item.title}</b><br>${item.type} - ${item.region}`);
+      if (isClustered) {
+        markerClusterGroup.addLayer(marker);
+      } else {
+        plainMarkerGroup.addLayer(marker);
+      }
+    });
+
+    if (isClustered) {
+      map.addLayer(markerClusterGroup);
+      map.removeLayer(plainMarkerGroup);
+    } else {
+      map.addLayer(plainMarkerGroup);
+      map.removeLayer(markerClusterGroup);
+    }
+  }
+
+  clearBtn.onclick = () => {
+    // reset content and toggle visibility
+    folkloreDetails.innerHTML = '<p>Click on a marker to see details about the folklore, myth or legend.</p>';
+    folkloreDetails.style.display = 'none';
+    clearBtn.style.display = 'none';
+    document.getElementById('legend-control').style.display = 'block';
+  };
+
+  toggleBtn.onclick = () => {
+    const center = map.getCenter();
+    const zoom = map.getZoom();
+    isClustered = !isClustered;
+    toggleBtn.textContent = isClustered ? 'Disable Cluster View' : 'Enable Cluster View';
+    addMarkers();
+    map.setView(center, zoom); // maintain map position
+  };
+
+  searchInput.addEventListener('input', (e) => {
+    currentQuery = e.target.value.toLowerCase();
     addMarkers();
   });
-});
 
-AOS.init();
-addMarkers();
+  categoryBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      categoryBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentCategory = btn.dataset.category;
+      addMarkers();
+    });
+  });
+
+
+  AOS.init();
+
+  addMarkers();
+
 </script>
 
 </body>
-</html>
 
+</html>
